@@ -1,0 +1,9 @@
+
+# compiled output
+/dist
+/node_modules
+.vscode
+
+
+/.docker/dbdata
+/__pycache__
