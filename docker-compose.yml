@@ -21,6 +21,10 @@ services:
       dockerfile: scheduler/Dockerfile
     links:
       - redis
+    depends_on: 
+      - db
+    networks:
+      - app-network
   
   db:
     build: ./.docker/mysql
@@ -41,15 +45,17 @@ services:
     container_name: redis-container
     ports:
       - "6379:6379"
+    networks:
+      - app-network
   
-  rqmonitor:
-    image: pranavgupta1234/rqmonitor
-    ports:
-        - "8899:8899"
-    depends_on:
-      - redis
-    environment: 
-        - RQ_MONITOR_REDIS_URL=redis://redis:6379
+#   rqmonitor:
+#     image: pranavgupta1234/rqmonitor
+#     ports:
+#         - "8899:8899"
+#     depends_on:
+#       - redis
+#     environment: 
+#         - RQ_MONITOR_REDIS_URL=redis://redis:6379
 
 
 networks:

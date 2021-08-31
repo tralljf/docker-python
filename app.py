@@ -37,67 +37,23 @@ def task_teste():
 @app.route('/price', methods=['GET'])
 def price():
   try:
-    max_value = 10000
-    exchange = 'Bitpreco'
-    url = "https://api.bitpreco.com/btc-brl/orderbook"
-    headers = {
-      'Content-Type': 'application/json'
-    }
-    response = requests.request("GET", url, headers=headers)
-
-    sell_rate = 0
-    buy_rate = 0
-    total_satisfied = 0
-    sell_book = ""
-    rJson = json.loads(response.text)
-    for bid in rJson['bids']:       
-        sell_book = "{}{:.8f}:{:.2f};".format(sell_book, float(bid['amount']), float(bid['price']))
-        satisfied_this_order = float(bid['amount']) * float(bid['price'])
-        total_satisfied = total_satisfied + satisfied_this_order
-        if total_satisfied >= max_value:
-            sell_rate = float("{0:.2f}".format(bid['price']))
-            break
-    buy_book = ""
-    total_satisfied = 0
-    for ask in rJson['asks']:
-        buy_book = "{}{:.8f}:{:.2f};".format(buy_book, float(ask['amount']), float(ask['price']))                         
-        satisfied_this_order = float(ask['amount']) * float(ask['price'])
-        total_satisfied = total_satisfied + satisfied_this_order
-        if total_satisfied >= max_value:
-            buy_rate = float("{0:.2f}".format(ask['price']))
-            break
-
+    print('aqui')
     connection = pymysql.connect(host='db',
                              user='root',
                              password='root',
                              database='crypto',
                              cursorclass=pymysql.cursors.DictCursor)
 
-    with connection:
-        with connection.cursor() as cursor:
-            # Create a new record
-            
-            sql = "INSERT INTO `PRICES` (`sell_rate`, `buy_rate`, `sell_book`, `buy_book`, `exchange`) VALUES ({}, {}, '{}', '{}', '{}')".format(sell_rate, buy_rate, sell_book, buy_book, exchange)
-            print(sql)
-            cursor.execute(sql)
 
-        # connection is not autocommit by default. So you must commit to save
-        # your changes.
-        connection.commit()
 
-    # with connection.cursor() as cursor:
-    #     # Read a single record
-    #     sql = "SELECT `sell_rate`, `buy_rate`, `sell_book`, `buy_book` FROM `prices` WHERE `sell_rate`=%d"
-    #     cursor.execute(sql, (1,))
-    #     result = cursor.fetchone()
-    #     print(result)
+    with connection.cursor() as cursor:
+        # Read a single record
+        sql = "SELECT `sell_book`, `buy_book` FROM `prices` order by created_at desc limit 1 "
+        cursor.execute(sql)
+        result = cursor.fetchone()
+
             
-    return jsonify([{
-      'sell_rate2': sell_rate, 
-      'buy_rate': buy_rate, 
-      'sell_book': sell_book, 
-      'buy_book': buy_book
-    }])
+    return jsonify(result)
   except Exception as e:
     print(e)
     return jsonify([{
