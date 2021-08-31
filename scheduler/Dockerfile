@@ -16,4 +16,7 @@ ENV C_FORCE_ROOT=1
 
 # run supervisord
 # CMD ["/usr/bin/supervisord"]
-CMD [ "celery -A celery_app worker" ]
+
+
+RUN echo user=root >>  /etc/supervisor/supervisord.conf
+CMD ["/usr/bin/supervisord","-n"]

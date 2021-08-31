@@ -1,19 +1,19 @@
 version: '3'
 services:
-#   api:
-#     container_name: flask-container
-#     build: .
-#     entrypoint: python app.py
-#     depends_on: 
-#      - db
-#     env_file:
-#       - .env
-#     ports:
-#       - '5000:5000'
-#     volumes:
-#       - .:/app
-#     networks:
-#       - app-network
+  api:
+    container_name: flask-container
+    build: .
+    entrypoint: python app.py
+    depends_on: 
+     - db
+    env_file:
+      - .env
+    ports:
+      - '5000:5000'
+    volumes:
+      - .:/app
+    networks:
+      - app-network
 
   scheduler:
     build:
@@ -22,19 +22,19 @@ services:
     links:
       - redis
   
-#   db:
-#     build: ./.docker/mysql
-#     restart: always
-#     tty: true
-#     ports:
-#       - "3306:3306"
-#     volumes:
-#       - ./.docker/dbdata:/var/lib/mysql
-#       - ./.docker/mysql:/docker-entrypoint-initdb.d
-#     environment:
-#       - MYSQL_ROOT_PASSWORD=root
-#     networks:
-#       - app-network
+  db:
+    build: ./.docker/mysql
+    restart: always
+    tty: true
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./.docker/dbdata:/var/lib/mysql
+      - ./.docker/mysql:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - app-network
 
   redis:
     image: redis
