@@ -39,9 +39,6 @@ celery_app = make_celery(app)
 
 
 @celery_app.task(name='price')
-# def return_something():
-#     print ('something')
-#     return 'something'
 def price():
   try:
     max_value = 10000
