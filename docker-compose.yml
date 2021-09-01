@@ -15,15 +15,28 @@ services:
     networks:
       - app-network
 
-  scheduler:
+  celery:
     build:
       context: .
       dockerfile: scheduler/Dockerfile
-    entrypoint: ./.docker/entrypoint.sh
-    links:
-      - redis
-    depends_on: 
+    command: celery  -A scheduler.celery_app worker -l info
+    volumes:
+      - ./scheduler:/scheduler
+    depends_on:
       - db
+      - redis
+    networks:
+      - app-network
+      
+  celery-beat:
+    build: .
+    command: celery -A scheduler.celery_app beat -l info
+    volumes:
+      - ./scheduler:/scheduler
+    depends_on:
+      - db
+      - redis
+      - celery
     networks:
       - app-network
   
